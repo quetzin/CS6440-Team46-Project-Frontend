@@ -13,7 +13,8 @@ By default, `/api/*` requests are proxied to `http://localhost:8000` (configure 
 - `GET /api/patients`
 - `GET /api/patients/:id`
 ```jsonc
-// Patient shape (example)
+
+//Patient shape - ie.
 {
   "id": "p-1",
   "name": "George Burdell",
