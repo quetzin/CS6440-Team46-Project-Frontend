@@ -1,4 +1,4 @@
-# ICU Wallboard — Patients Only (React + Tailwind)
+# ICU Wallboard 
 
 - Patient Board (grid of patient status lights)
 - Patient View (vitals + demographics)
