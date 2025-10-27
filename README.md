@@ -1,6 +1,5 @@
 # ICU Wallboard — Patients Only (React + Tailwind)
 
-Minimal demo UI that matches your backend's simple shape and focuses **only on patients**:
 - Patient Board (grid of patient status lights)
 - Patient View (vitals + demographics)
 
