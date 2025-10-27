@@ -9,10 +9,8 @@ npm install
 npm run dev
 ```
 
-By default, `/api/*` requests are proxied to `http://localhost:8000` (configure in `vite.config.ts`). The app expects your backend to expose:
 - `GET /api/patients`
 - `GET /api/patients/:id`
-```jsonc
 
 //Patient shape - ie.
 {
