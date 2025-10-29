@@ -5,11 +5,21 @@ import './index.css'
 import App from './App'
 import PatientBoard from './pages/PatientBoard'
 import PatientView from './pages/PatientView'
+import Login from './pages/Login'
+import ProtectedRoute from './components/ProtectedRoute'
 
 const router = createBrowserRouter([
   {
+    path: '/login',
+    element: <Login />
+  },
+  {
     path: '/',
-    element: <App />,
+    element: (
+      <ProtectedRoute>
+        <App />
+      </ProtectedRoute>
+    ),
     children: [
       { index: true, element: <PatientBoard /> },
       { path: 'patient/:id', element: <PatientView /> },
