@@ -5,15 +5,12 @@ import StatusLight from "../components/StatusLight";
 import CenterSummary from "../components/CenterSummary";
 import PatientModal from "../components/PatientModal";
 
-/**
- * 5x5 board. Patients render around the outer ring (16 slots).
- * Hovering a tile updates the center summary. Clicking opens a modal.
- */
+
 export default function PatientBoard() {
   const [patients, setPatients] = useState<Patient[] | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  // selection state
+  //selection state
   const [hoverId, setHoverId] = useState<string | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null); // for modal
 
@@ -45,7 +42,7 @@ export default function PatientBoard() {
   if (error) return <div className="text-red-600">{error}</div>;
   if (!patients) return <div>Loading…</div>;
 
-  // ring coordinates around a 5x5
+  //ring coordinates around a 5x5
   type Pos = { r: number; c: number };
   const ring: Pos[] = [
     // top

@@ -1,5 +1,14 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import type { Patient } from "../types";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  CartesianGrid,
+  ResponsiveContainer,
+} from "recharts";
 
 export default function PatientModal({
   patient,
@@ -8,12 +17,27 @@ export default function PatientModal({
   patient: Patient;
   onClose: () => void;
 }) {
+  const [activeTab, setActiveTab] = useState<"current" | "predicted">("current");
+
   // close on ESC
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [onClose]);
+
+  //dummy hemoglobin data
+  const dummyData = [
+    { time: "08:00", hemoglobin: 12 },
+    { time: "12:00", hemoglobin: 11.8 },
+    { time: "16:00", hemoglobin: 11.5 },
+    { time: "20:00", hemoglobin: 11.3 },
+  ];
+
+  const predictedData = dummyData.map((d, i) => ({
+    ...d,
+    hemoglobin: d.hemoglobin + 0.1 * (i + 1),
+  }));
 
   return (
     <div
@@ -52,6 +76,53 @@ export default function PatientModal({
           <Vital label="Resp Rate" value={patient.vitals.respRate} />
           <Vital label="Temp" value={patient.vitals.temp} />
           <Vital label="Status" value={patient.status.toUpperCase()} />
+        </div>
+
+        {/* Hemoglobin Chart */}
+        <div className="mt-4">
+          <div className="flex border-b border-gray-300 mb-2">
+            <button
+              className={`px-4 py-1 font-semibold ${
+                activeTab === "current"
+                  ? "border-b-2 border-red-500 text-red-500"
+                  : ""
+              }`}
+              onClick={() => setActiveTab("current")}
+            >
+              Current
+            </button>
+            <button
+              className={`px-4 py-1 font-semibold ${
+                activeTab === "predicted"
+                  ? "border-b-2 border-red-500 text-red-500"
+                  : ""
+              }`}
+              onClick={() => setActiveTab("predicted")}
+            >
+              Predicted
+            </button>
+          </div>
+
+          <div className="w-full h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart
+                data={activeTab === "current" ? dummyData : predictedData}
+                margin={{ top: 10, right: 20, bottom: 10, left: 0 }}
+              >
+                <CartesianGrid stroke="#f5f5f5" />
+                <XAxis dataKey="time" />
+                <YAxis />
+                <Tooltip />
+                <Line
+                  type="monotone"
+                  dataKey="hemoglobin"
+                  stroke="#ef4444"
+                  strokeWidth={2}
+                  dot={{ r: 4 }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
         </div>
 
         <div className="mt-4">
