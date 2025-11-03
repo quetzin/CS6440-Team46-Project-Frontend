@@ -27,8 +27,9 @@ export default function Login() {
       
       // Demo validation
       if (email === 'demo@icu.com' && password === 'demo123') {
-        // Store auth token (in real app, use secure storage)
+        // Store auth token and email (in real app, use secure storage)
         localStorage.setItem('authToken', 'demo-token')
+        localStorage.setItem('userEmail', email)
         navigate('/')
       } else {
         setError('Invalid email or password')
