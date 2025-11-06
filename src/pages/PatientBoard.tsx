@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { listPatients } from "../api/patients";
+import { listPatients, listPatientsWithAuthCheck } from "../api/patients";
 import type { Patient } from "../types";
 import StatusLight from "../components/StatusLight";
 import CenterSummary from "../components/CenterSummary";
@@ -15,15 +15,15 @@ export default function PatientBoard() {
   const [selectedId, setSelectedId] = useState<string | null>(null); // for modal
 
   useEffect(() => {
-    listPatients().then(setPatients).catch((e) => setError(e.message));
+    listPatientsWithAuthCheck().then(setPatients).catch((e) => setError(e.message));
   }, []);
 
-  const { critical, abnormal, ok, byId } = useMemo(() => {
+  const { critical, abnormal, normal, byId } = useMemo(() => {
     const all = patients ?? [];
     return {
       critical: all.filter((p) => p.status === "critical"),
       abnormal: all.filter((p) => p.status === "abnormal"),
-      ok: all.filter((p) => p.status === "ok"),
+      normal: all.filter((p) => p.status === "normal"),
       byId: Object.fromEntries(all.map((p) => [p.id, p] as const)) as Record<
         string,
         Patient
@@ -40,7 +40,7 @@ export default function PatientBoard() {
   }, [patients, byId, hoverId, critical]);
 
   if (error) return <div className="text-red-600">{error}</div>;
-  if (!patients) return <div>Loading…</div>;
+  if (!patients) return <div>Retrieving all patients... this can take a while...</div>;
 
   //ring coordinates around a 5x5
   type Pos = { r: number; c: number };

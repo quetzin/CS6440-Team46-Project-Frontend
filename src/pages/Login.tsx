@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Activity } from 'lucide-react'
 
@@ -8,6 +8,12 @@ export default function Login() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+
+  // Automatically fill demo credentials
+  useEffect(() => {
+    setEmail('demo@icu.com')
+    setPassword('demo123')
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -30,7 +36,9 @@ export default function Login() {
         // Store auth token and email (in real app, use secure storage)
         localStorage.setItem('authToken', 'demo-token')
         localStorage.setItem('userEmail', email)
-        navigate('/')
+        //navigate('/authorize')
+        //window.location.href = "/authorize" // necessary because the above only routes frontend logic
+        window.location.href = "http://localhost:8000/authorize"
       } else {
         setError('Invalid email or password')
       }

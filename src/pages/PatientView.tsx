@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { getPatient } from '../api/patients'
+import { getPatient, getPatientWithAuthCheck } from '../api/patients'
 import type { Patient } from '../types'
 import StatusLight from '../components/StatusLight'
 
@@ -19,7 +19,7 @@ export default function PatientView(){
   const [error, setError] = useState<string | null>(null)
   useEffect(()=>{
     if(!id) return
-    getPatient(id).then(setPatient).catch(e=>setError(e.message))
+    getPatientWithAuthCheck(id).then(setPatient).catch(e=>setError(e.message))
   },[id])
   if (error) return <div className="text-red-600">{error}</div>
   if (!patient) return <div>Loading…</div>

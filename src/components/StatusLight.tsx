@@ -2,7 +2,7 @@ import React from 'react'
 import type { Status } from '../types'
 
 const map: Record<Status, string> = {
-  ok: 'bg-emerald-500',
+  normal: 'bg-emerald-500',
   abnormal: 'bg-yellow-400',
   critical: 'bg-red-500'
 }

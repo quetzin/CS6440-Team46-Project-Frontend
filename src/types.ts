@@ -1,4 +1,4 @@
-export type Status = 'ok' | 'abnormal' | 'critical';
+export type Status = 'normal' | 'abnormal' | 'critical';
 export type Vitals = {
   heartRate: number;
   bpSys: number;
