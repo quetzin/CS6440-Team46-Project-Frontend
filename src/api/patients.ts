@@ -192,25 +192,39 @@ export async function getPatient(id: string): Promise<Patient> {
 // Function to clear session and redirect to login
 function logout() {
   // Remove session data or tokens
-  sessionStorage.removeItem('authToken');
   localStorage.removeItem('authToken');
   // Redirect to login page
   window.location.href = '/login'; // Or use react-router: history.push('/login');
 }
-// Example of your existing functions
+
 export async function listPatients(): Promise<Patient[]> {
   const res = await fetch("http://localhost:8000/api/patients", {
     credentials: "include",
   });
-  if (!res.ok) throw new Error("Failed to load patients");
+
+  if (res.status === 401) {
+    throw new Error("AUTH");
+  }
+  if (!res.ok) {
+    throw new Error("Failed to load patients");
+  }
+
   return res.json();
 }
+
 
 export async function getPatient(id: string): Promise<Patient> {
   const res = await fetch(`http://localhost:8000/api/patients/${id}`, {
     credentials: "include",
   });
-  if (!res.ok) throw new Error("Failed to load patient");
+
+  if (res.status === 401) {
+    throw new Error("AUTH");
+  }
+  if (!res.ok) {
+    throw new Error("Failed to load patient");
+  }
+
   return res.json();
 }
 
@@ -220,9 +234,8 @@ function withAuthCheck<T extends (...args: any[]) => Promise<any>>(fetchFunc: T)
     try {
       return await fetchFunc(...args);
     } catch (error) {
-      // Handle authentication errors
-      if (error instanceof Error && (error.message.includes("Failed to load") || error.message.includes("Session expired"))) {
-        logout(); // Log out the user
+      if (error instanceof Error && error.message === "AUTH") {
+        logout(); // <- triggers ProtectedRoute redirect
       }
       throw error;
     }
