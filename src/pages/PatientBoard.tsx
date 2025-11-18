@@ -5,7 +5,6 @@ import StatusLight from "../components/StatusLight";
 import CenterSummary from "../components/CenterSummary";
 import PatientModal from "../components/PatientModal";
 
-
 export default function PatientBoard() {
   const [patients, setPatients] = useState<Patient[] | null>(null);
   const [error, setError] = useState<string | null>(null);
