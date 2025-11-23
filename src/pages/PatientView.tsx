@@ -14,13 +14,32 @@ function Vital({label, value, unit}:{label:string, value:number|string, unit?:st
 }
 
 export default function PatientView(){
-  const { id } = useParams()
+  const params = useParams();
+  console.log("useParams:", params)
+  const { id } = params;
+
   const [patient, setPatient] = useState<Patient | null>(null)
   const [error, setError] = useState<string | null>(null)
   useEffect(()=>{
-    if(!id) return
-    getPatientWithAuthCheck(id).then(setPatient).catch(e=>setError(e.message))
+    console.log("useEffect fired, id =", id)
+
+    if(!id) {
+      console.warn("No id provided in params!");
+      return
+    }
+    
+    console.log("Calling getPatientWithAuthCheck with id:", id);
+    getPatientWithAuthCheck(id)
+      .then(p => {
+        console.log("Patient fetched:", p);
+        setPatient(p)
+      })
+      .catch(e => {
+        console.error("Error fetching patient:", e);
+        setError(e.message)
+      })
   },[id])
+  
   if (error) return <div className="text-red-600">{error}</div>
   if (!patient) return <div>Loading…</div>
   const v = patient.vitals
