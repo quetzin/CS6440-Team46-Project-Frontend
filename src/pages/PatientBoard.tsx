@@ -11,7 +11,8 @@ export default function PatientBoard() {
 
   //selection state
   const [hoverId, setHoverId] = useState<string | null>(null);
-  const [selectedId, setSelectedId] = useState<string | null>(null); // for modal
+  const [selectedId, setSelectedId] = useState<string | null>(null); // last clicked patient (shown in center)
+  const [modalOpen, setModalOpen] = useState(false); // controls modal visibility
 
   useEffect(() => {
     listPatientsWithAuthCheck().then(setPatients).catch((e) => setError(e.message));
@@ -30,13 +31,14 @@ export default function PatientBoard() {
     };
   }, [patients]);
 
-  // featured patient priority: hover > first critical > first patient
+  // featured patient priority: last selected > hover > first critical > first patient
   const featured: Patient | null = useMemo(() => {
     if (!patients || patients.length === 0) return null;
+    if (selectedId && byId[selectedId]) return byId[selectedId]; // show last clicked patient
     if (hoverId && byId[hoverId]) return byId[hoverId];
     if (critical[0]) return critical[0];
     return patients[0];
-  }, [patients, byId, hoverId, critical]);
+  }, [patients, byId, selectedId, hoverId, critical]);
 
   if (error) return <div className="text-red-600">{error}</div>;
   if (!patients) return <div>Retrieving all patients... this can take a while...</div>;
@@ -74,7 +76,12 @@ export default function PatientBoard() {
               <div key={idx} style={style} className="flex items-center justify-center">
                 <button
                   disabled={!p}
-                  onClick={() => p && setSelectedId(p.id)} // open modal
+                  onClick={() => {
+                    if (p) {
+                      setSelectedId(p.id); // show in center
+                      setModalOpen(true); // open modal
+                    }
+                  }}
                   onMouseEnter={() => p && setHoverId(p.id)} // update center summary on hover
                   onMouseLeave={() => setHoverId(null)}
                   className={`group w-full h-full min-h-16 min-w-16 rounded-xl2 bg-slate-800 ring-1 ring-white/10 hover:ring-white/20 transition flex items-center justify-center p-3 ${p ? "cursor-pointer" : "opacity-40"}`}
@@ -100,8 +107,8 @@ export default function PatientBoard() {
       </div>
 
       {/* modal */}
-      {selectedId && byId[selectedId] && (
-        <PatientModal patient={byId[selectedId]} onClose={() => setSelectedId(null)} />
+      {modalOpen && selectedId && byId[selectedId] && (
+        <PatientModal patient={byId[selectedId]} onClose={() => setModalOpen(false)} />
       )}
     </>
   );
