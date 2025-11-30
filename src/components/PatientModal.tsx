@@ -126,11 +126,14 @@ export default function PatientModal({
 
   // Prepare chart data for selected metric
   const chartData = selectedMetric && patient.timeSeries?.[selectedMetric]
-    ? patient.timeSeries[selectedMetric].map(point => ({
-        time: formatTime(point.time),
-        value: point.value,
-        fullTime: point.time,
-      }))
+    ? patient.timeSeries[selectedMetric]
+        .slice() // Create a copy to avoid mutating original data
+        .sort((a, b) => new Date(a.time).getTime() - new Date(b.time).getTime()) // Sort chronologically (oldest first)
+        .map(point => ({
+          time: formatTime(point.time),
+          value: point.value,
+          fullTime: point.time,
+        }))
     : [];
 
   // Shock/Emergency Labs (static display)
