@@ -21,26 +21,32 @@ export default function Login() {
     setLoading(true)
 
     try {
-      // TODO: Replace with actual API call
-      // const response = await fetch('/api/auth/login', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ email, password })
-      // })
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
-      // Demo validation
-      if (email === 'demo@icu.com' && password === 'demo123') {
-        // Store auth token and email (in real app, use secure storage)
-        localStorage.setItem('authToken', 'demo-token')
+      const response = await fetch('http://localhost:8000/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ email, password })
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+
+        // Store auth token and email if provided by the backend
+        if (data.token) {
+          localStorage.setItem('authToken', data.token)
+        }
         localStorage.setItem('userEmail', email)
-        //navigate('/authorize')
-        //window.location.href = "/authorize" // necessary because the above only routes frontend logic
+
+        // Redirect to authorization endpoint
         window.location.href = "http://localhost:8000/authorize"
       } else {
-        setError('Invalid email or password')
+        // Handle different error status codes
+        if (response.status === 401) {
+          setError('Invalid email or password')
+        } else {
+          const errorData = await response.json().catch(() => ({}))
+          setError(errorData.message || 'Authentication failed. Please try again.')
+        }
       }
     } catch (err) {
       setError('An error occurred. Please try again.')
