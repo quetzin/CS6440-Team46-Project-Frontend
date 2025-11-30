@@ -11,13 +11,13 @@ import {
   Legend,
 } from "recharts";
 
-// Helper to format time for display
+// Helper to format date for display
 const formatTime = (isoString: string) => {
   const date = new Date(isoString);
-  return date.toLocaleTimeString('en-US', { 
-    hour: '2-digit', 
-    minute: '2-digit',
-    hour12: false 
+  return date.toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric'
   });
 };
 
@@ -171,9 +171,12 @@ export default function PatientModal({
                       margin={{ top: 10, right: 20, bottom: 10, left: 0 }}
                     >
                       <CartesianGrid stroke="#f5f5f5" />
-                      <XAxis 
-                        dataKey="time" 
+                      <XAxis
+                        dataKey="time"
                         tick={{ fontSize: 12 }}
+                        angle={-45}
+                        textAnchor="end"
+                        height={80}
                       />
                       <YAxis 
                         tick={{ fontSize: 12 }}
