@@ -21,6 +21,19 @@ const formatTime = (isoString: string) => {
   });
 };
 
+// Helper to format full date and time for tooltip
+const formatFullDateTime = (isoString: string) => {
+  const date = new Date(isoString);
+  return date.toLocaleString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true
+  });
+};
+
 // Helper to format lab/vital names for display
 const formatLabName = (key: string): string => {
   const nameMap: Record<string, string> = {
@@ -58,6 +71,27 @@ const getUnit = (key: string): string => {
     bnp: "pg/mL",
   };
   return unitMap[key] || "";
+};
+
+// Custom tooltip component for displaying lab results
+const CustomTooltip = ({ active, payload, label, metricName }: any) => {
+  if (active && payload && payload.length) {
+    const data = payload[0].payload;
+    return (
+      <div className="bg-white p-3 border border-slate-300 rounded-lg shadow-lg">
+        <p className="text-xs text-slate-600 mb-1">
+          {formatFullDateTime(data.fullTime)}
+        </p>
+        <p className="text-sm font-semibold text-slate-900">
+          {formatLabName(metricName)}
+        </p>
+        <p className="text-lg font-bold text-red-500">
+          {payload[0].value.toFixed(2)} {getUnit(metricName)}
+        </p>
+      </div>
+    );
+  }
+  return null;
 };
 
 export default function PatientModal({
@@ -187,11 +221,8 @@ export default function PatientModal({
                           style: { fontSize: 12 }
                         }}
                       />
-                      <Tooltip 
-                        formatter={(value: number) => [
-                          `${value} ${getUnit(selectedMetric!)}`,
-                          formatLabName(selectedMetric!)
-                        ]}
+                      <Tooltip
+                        content={<CustomTooltip metricName={selectedMetric} />}
                       />
                       <Legend 
                         formatter={() => formatLabName(selectedMetric!)}
